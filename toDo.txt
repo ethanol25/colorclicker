@@ -1,0 +1,8 @@
+long press to change to "auto switch colors"
+change through palettes with double taps (see 6)
+change text to bottom left with a div or a table cell??
+change text color based on luminescence of rgb
+settings menu, discreet
+create handpicked lists??? special palettes you can rotate through??
+
+
