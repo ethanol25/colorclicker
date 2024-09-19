@@ -1,4 +1,4 @@
-
+// color getter functions. i could probably reduce this to one function.
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
@@ -18,6 +18,8 @@ const randColour = () => {
     return colourHex;
 }
 
+
+// sets click to change color
 document.body.addEventListener("click", async () => {
     const colourHex = randColour();
     console.log("Color Hex:" + colourHex)
@@ -46,3 +48,25 @@ document.body.addEventListener("click", async () => {
     
 })
 
+
+//modal javascript
+
+var modal = document.getElementById("myModal");
+
+var btn = document.getElementById("settingsBtn");
+
+var span = document.getElementsByClassName("close")[0];
+
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}

@@ -15,7 +15,36 @@
 
   <h1 id="colorName">Click to Generate a Color</h1>
 
+
+  <div id="myModal" class="modal">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Settings</h2>
+      </div>
+      <div class="modal-body">
+        <p>Text</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="settingpopup" onclick="settingFunction()"> Settings
+    <span class="popuptext" id="myPopup"> 
+      <button id="settingsBtn">Settings</button>
+    </span>
+  </div>
+
+
   <script src="color.js" defer></script>
 
+<script>
+  function settingFunction() {
+    var popup = document.getElementById("myPopup");
+    popup.classList.toggle("show");
+}
+</script>
+  
 </body>
 </html>
