@@ -1,4 +1,4 @@
-// color getter functions. i could probably reduce this to one function.
+
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
@@ -16,6 +16,7 @@ const hexGen = () => {
     return colorHex;
 }
 
+//fetch color name from color.pizza api
 async function findColorName(colorHex) {
     try {
         const apiUrl = `https://api.color.pizza/v1/${colorHex}`
@@ -38,6 +39,8 @@ async function findColorName(colorHex) {
 }
 var colorList = [];
 
+
+//initalize array with 5 colors
 async function initColorList() {
     let promises = [];
     for (let i = 0; i < 5; i++) {
@@ -55,6 +58,7 @@ async function initColorList() {
     console.log(colorList);
 }
 
+// function for adding new color to end of list
 async function addToList() {
     const colorHex = hexGen();
     const colorName = await findColorName(colorHex);
@@ -68,53 +72,49 @@ document.addEventListener("DOMContentLoaded", initColorList);
 
 let current = 0;
 
-document.body.addEventListener("click", function () {
-    console.log(current)
+async function nextInList() {
+    if (current < colorList.length - 1) {
+        console.log(current)
 
-    console.log("array size pre iteration: " + colorList.length);
-
-
-
-    //something is broken with the way current is being updated and tracked, specifically when left is pressed and array bigger than 9. look into it. 
-    if (colorList.length > 9) {
-        colorList.shift();
-        console.log("shift!")
-        current--;
+        current++;
+        updateColor();
+        
+        if (current > colorList.length - 5){
+            await addToList();
+        }
     }
-    colorHex = colorList[current].hex;
-    colorName = colorList[current].name;
-    
+}
+
+async function prevInList() {
+    if (current > 0) {
+        current--;
+        updateColor();
+    }
+}
+
+function updateColor() {
+    const colorHex = colorList[current].hex;
+    const colorName = colorList[current].name;
 
     document.getElementById('colorName').textContent = colorName;
     document.body.style.backgroundColor = `#${colorHex}`;
+}
 
-    current++;
-
-    
-    addToList();
+document.body.addEventListener("click", function () {
+    nextInList();
 })
-
 
 
 //listen for left and right key press
 document.body.addEventListener('keydown', function (event) {
-    const key = event.key;
-    switch (key) {
+    switch (event.key) {
         case "ArrowLeft":
-            str = 'Left';
-            console.log(str)
-            if (current > 0) {
-                current--;
-                colorHex = colorList[current].hex;
-                colorName = colorList[current].name;
-            
-                document.getElementById('colorName').textContent = colorName;
-                document.body.style.backgroundColor = `#${colorHex}`;
-            }
+            console.log("left");
+            prevInList();
             break;
         case "ArrowRight":
-            str = 'Right';
-            console.log(str)
+            console.log("right");
+            nextInList();
             break;
     }
 
