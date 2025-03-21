@@ -1,25 +1,12 @@
 
 
-add setting pop up, when icon clicked, leads to modal w settings
-
-
-
-
-
-
-
-
-
-
-
 longterm
 
 long press to change to "auto switch colors" (or just settings menu?)
-change through palettes with double taps (see 6)
+change through palettes with double taps 
 change text to bottom left with a div or a table cell??
-change text color based on luminescence of rgb
-settings menu, discreet
 create handpicked lists??? special palettes you can rotate through??
 create as a mobile app using flutter
 
 
+hover on left third, pop out color of last

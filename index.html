@@ -9,47 +9,36 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
-
-
 <body>
 
   <h1 id="colorName">Click to Generate a Color</h1>
+  <h2 id="tutorial">Left Arrow and Right Arrow to Go Back or Forward</h2>
 
+  <div id="hoverArea" class="hover-area">
+    <button id="hoverButton" class="hover-button">
+      <img src="settings_white_icon.png" alt="settings" style="width:20px;height:20px;">
+    </button>
+  </div>
 
+  <div id="leftHover" class="left-hover-area">
+    <button id="leftHoverButton" class="left-hover-button"></button>
+  </div>
 
- <!--
-  <div id="myModal" class="modal">
+  <div id="rightHover" class="right-hover-area">
+    <button id="rightHoverButton" class="right-hover-button"></button>
+  </div>
 
+  <div id ="myModal" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <span class="close">&times;</span>
-        <h2>Settings</h2>
-      </div>
-      <div class="modal-body">
-        <p>Text</p>
-      </div>
+      <span class="close">&times;</span>
+      <h2>Settings</h2>
+      <label>
+        <input type="checkbox" id="hexCheckbox">
+        Show Hex
+      </label>
     </div>
-
   </div>
-
-  <div class="settingpopup" onclick="settingFunction()"> Settings
-    <span class="popuptext" id="myPopup"> 
-      <button id="settingsBtn">Settings</button>
-    </span>
-  </div>
-
-  -->
 
   <script src="color.js" defer></script>
-
-  <!--
-<script>
-  function settingFunction() {
-    var popup = document.getElementById("myPopup");
-    popup.classList.toggle("show");
-}
-</script>
-  
- -->
 </body>
 </html>

@@ -1,44 +1,28 @@
-
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-  }
-
 const hexGen = () => {
-    const randomBetween = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
-
-    const r = componentToHex(randomBetween(0, 255));
-    const g = componentToHex(randomBetween(0, 255));
-    const b = componentToHex(randomBetween(0, 255));
-
-    const colorHex = r + g + b;
-
-    return colorHex;
+    const randomHex = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
+    return randomHex() + randomHex() + randomHex();
 }
 
 //fetch color name from color.pizza api
 async function findColorName(colorHex) {
     try {
-        const apiUrl = `https://api.color.pizza/v1/${colorHex}`
-        const response = await fetch(apiUrl);
+        const response = await fetch(`https://api.color.pizza/v1/${colorHex}`);
         const data = await response.json();
 
         if (data.colors && data.colors.length > 0) {
-
-            const colorName = data.colors[0].name;
-            return colorName;
+            return {name: data.colors[0].name, luminance: data.colors[0].luminance};
         } else {
             console.log("No info found")
-            return "Unknown color";
+            return {name: "Unknown color", luminance: 0};
         }
-
     } catch (error) {
         console.error('Error fetching color data:', error);
-        return "error";
+        return {name: "error", luminance: 0};
     }
 }
-var colorList = [];
 
+var colorList = [];
+let current = 0;
 
 //initalize array with 5 colors
 async function initColorList() {
@@ -47,8 +31,8 @@ async function initColorList() {
         const colorHex = hexGen();
 
         promises.push(
-            findColorName(colorHex).then(colorName => {
-                return {name: colorName, hex: colorHex};
+            findColorName(colorHex).then(colorData => {
+                return {name: colorData.name, hex: colorHex, luminance: colorData.luminance};
             })
         );
     }
@@ -61,18 +45,17 @@ async function initColorList() {
 // function for adding new color to end of list
 async function addToList() {
     const colorHex = hexGen();
-    const colorName = await findColorName(colorHex);
+    const colorData = await findColorName(colorHex);
 
-    colorList.push({name: colorName, hex: colorHex });
+    colorList.push({name: colorData.name, hex: colorHex, luminance: colorData.luminance});
 
     console.log(colorList);
 }
 
 document.addEventListener("DOMContentLoaded", initColorList);
 
-let current = 0;
-
 async function nextInList() {
+    document.getElementById('tutorial').textContent = "";
     if (current < colorList.length - 1) {
         console.log(current)
 
@@ -85,7 +68,7 @@ async function nextInList() {
     }
 }
 
-async function prevInList() {
+function prevInList() {
     if (current > 0) {
         current--;
         updateColor();
@@ -95,14 +78,40 @@ async function prevInList() {
 function updateColor() {
     const colorHex = colorList[current].hex;
     const colorName = colorList[current].name;
+    const colorLum = colorList[current].luminance;
+    const prevHex = current > 0 ? colorList[current - 1].hex : colorHex;
+    const nextHex = current < colorList.length - 1 ? colorList[current + 1].hex : colorHex;
+
 
     document.getElementById('colorName').textContent = colorName;
     document.body.style.backgroundColor = `#${colorHex}`;
+
+    console.log(colorLum);
+
+    const textColor = colorLum > 50 ? "black" : "white";
+    console.log(textColor);
+    document.getElementById('colorName').style.color = textColor;
+
+    document.getElementById('leftHoverButton').style.backgroundColor = `#${prevHex}`;
+    document.getElementById('rightHoverButton').style.backgroundColor = `#${nextHex}`;
+
+
+    if (document.getElementById("hexCheckbox").checked) {
+        document.getElementById("colorName").textContent += ` - #${colorHex}`;
+    }
 }
 
-document.body.addEventListener("click", function () {
-    nextInList();
-})
+//settings variables
+var modal = document.getElementById("myModal");
+var openBtn = document.getElementById("hoverButton");
+var closeSpan = document.getElementsByClassName("close")[0];
+
+document.body.addEventListener("click", function (e) {
+    if (!modal.contains(e.target)) {
+        nextInList();
+    }
+
+});
 
 
 //listen for left and right key press
@@ -121,26 +130,38 @@ document.body.addEventListener('keydown', function (event) {
 });
 
 
-/*
+//SETTINGS
 
-//modal javascript
-
-var modal = document.getElementById("myModal");
-
-var btn = document.getElementById("settingsBtn");
-
-var span = document.getElementsByClassName("close")[0];
-
-btn.onclick = function() {
+function openModal(e) {
+    e.stopPropagation();
     modal.style.display = "block";
 }
 
-span.onclick = function() {
+function closeModal(e) {
+    e.stopPropagation();
     modal.style.display = "none";
 }
 
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+openBtn.addEventListener("click", openModal);
+closeSpan.addEventListener("click", closeModal);
+
+window.onclick = function(e) {
+    if (e.target == modal) {
+        closeModal(e);
     }
-}*/
+}
+
+
+//left right button
+var leftBtn = document.getElementById("leftHoverButton");
+var rightBtn = document.getElementById("rightHoverButton");
+
+leftBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    prevInList();
+});
+
+rightBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    nextInList();
+})
