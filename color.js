@@ -49,7 +49,6 @@ async function addToList() {
 
     colorList.push({name: colorData.name, hex: colorHex, luminance: colorData.luminance});
 
-    console.log(colorList);
 }
 
 document.addEventListener("DOMContentLoaded", initColorList);
@@ -86,31 +85,27 @@ function updateColor() {
     document.getElementById('colorName').textContent = colorName;
     document.body.style.backgroundColor = `#${colorHex}`;
 
-    console.log(colorLum);
-
     const textColor = colorLum > 50 ? "black" : "white";
-    console.log(textColor);
     document.getElementById('colorName').style.color = textColor;
 
     document.getElementById('leftHoverButton').style.backgroundColor = `#${prevHex}`;
     document.getElementById('rightHoverButton').style.backgroundColor = `#${nextHex}`;
 
-
-    if (document.getElementById("hexCheckbox").checked) {
+    //check if hex should be displayed
+    if (hexCheckbox.checked) {
         document.getElementById("colorName").textContent += ` - #${colorHex}`;
     }
 }
 
-//settings variables
-var modal = document.getElementById("myModal");
-var openBtn = document.getElementById("hoverButton");
-var closeSpan = document.getElementsByClassName("close")[0];
+
+const modal = document.getElementById("myModal");
+const openBtn = document.getElementById("hoverButton");
+const closeSpan = document.getElementsByClassName("close")[0];
 
 document.body.addEventListener("click", function (e) {
     if (!modal.contains(e.target)) {
         nextInList();
     }
-
 });
 
 
@@ -126,12 +121,12 @@ document.body.addEventListener('keydown', function (event) {
             nextInList();
             break;
     }
-
 });
 
 
 //SETTINGS
-
+//
+//
 function openModal(e) {
     e.stopPropagation();
     modal.style.display = "block";
@@ -152,9 +147,22 @@ window.onclick = function(e) {
 }
 
 
+//hex button press
+const hexCheckbox = document.getElementById("hexCheckbox");
+
+hexCheckbox.addEventListener('change', () => {
+    const colorHex = colorList[current].hex; 
+    if (hexCheckbox.checked) {
+        document.getElementById("colorName").textContent += ` - #${colorHex}`;
+    } else {
+        document.getElementById("colorName").textContent = colorList[current].name;
+    }
+});
+
+
 //left right button
-var leftBtn = document.getElementById("leftHoverButton");
-var rightBtn = document.getElementById("rightHoverButton");
+const leftBtn = document.getElementById("leftHoverButton");
+const rightBtn = document.getElementById("rightHoverButton");
 
 leftBtn.addEventListener("click", function (e) {
     e.stopPropagation();
@@ -165,3 +173,18 @@ rightBtn.addEventListener("click", function (e) {
     e.stopPropagation();
     nextInList();
 })
+
+//position change
+const positionCheckbox = document.getElementById("positionCheckbox")
+const colorName = document.getElementById("colorName");
+
+positionCheckbox.addEventListener('change', () => {
+    if (positionCheckbox.checked) {
+        colorName.classList.add('bottom-left');
+    } else {
+        colorName.classList.remove('bottom-left');
+    }
+})
+
+//is it better to just have a singular update on modal close?
+//seems possible

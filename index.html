@@ -28,14 +28,20 @@
     <button id="rightHoverButton" class="right-hover-button"></button>
   </div>
 
-  <div id ="myModal" class="modal">
+  <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Settings</h2>
-      <label>
-        <input type="checkbox" id="hexCheckbox">
-        Show Hex
-      </label>
+      <div class="settings">
+        <label class="settings-button">
+          <input type="checkbox" id="hexCheckbox" style="margin-right: 10px;">
+          Show Hex
+        </label>
+        <label class="settings-button">
+          <input type="checkbox" id="positionCheckbox" style="margin-right: 10px;">
+          Move Color Name to Bottom Left
+        </label>
+      </div>
     </div>
   </div>
 
