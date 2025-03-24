@@ -1,16 +1,33 @@
+$(document).ready(function () {
+    $("input:checkbox").prop("checked", false);
+});
+
 const hexGen = () => {
     const randomHex = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
     return randomHex() + randomHex() + randomHex();
 }
 
+const colorCache = {};
+
 //fetch color name from color.pizza api
 async function findColorName(colorHex) {
+    if (colorCache[colorHex]) {
+        return colorCache[colorHex];
+    }
+
     try {
         const response = await fetch(`https://api.color.pizza/v1/${colorHex}`);
         const data = await response.json();
 
         if (data.colors && data.colors.length > 0) {
-            return {name: data.colors[0].name, luminance: data.colors[0].luminance};
+            colorCache[colorHex] = {
+                name: data.colors[0].name,
+                luminance: data.colors[0].luminance
+            };
+            return {
+                name: data.colors[0].name,
+                luminance: data.colors[0].luminance
+            };
         } else {
             console.log("No info found")
             return {name: "Unknown color", luminance: 0};
@@ -48,7 +65,6 @@ async function addToList() {
     const colorData = await findColorName(colorHex);
 
     colorList.push({name: colorData.name, hex: colorHex, luminance: colorData.luminance});
-
 }
 
 document.addEventListener("DOMContentLoaded", initColorList);
@@ -97,7 +113,6 @@ function updateColor() {
     }
 }
 
-
 const modal = document.getElementById("myModal");
 const openBtn = document.getElementById("hoverButton");
 const closeSpan = document.getElementsByClassName("close")[0];
@@ -109,20 +124,45 @@ document.body.addEventListener("click", function (e) {
 });
 
 
+let isArrowKeyAllowed = true;
+
+function throttle(callback) {
+    if (isArrowKeyAllowed) {
+        isArrowKeyAllowed = false;
+        callback();
+        setTimeout(() => {
+            isArrowKeyAllowed = true;
+        }, 150);
+    }
+}
+
 //listen for left and right key press
 document.body.addEventListener('keydown', function (event) {
     switch (event.key) {
         case "ArrowLeft":
             console.log("left");
-            prevInList();
+            throttle(prevInList);
             break;
         case "ArrowRight":
             console.log("right");
-            nextInList();
+            throttle(nextInList);
             break;
     }
 });
 
+//left right button
+const leftBtn = document.getElementById("leftHoverButton");
+const rightBtn = document.getElementById("rightHoverButton");
+
+leftBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    prevInList();
+});
+
+rightBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    nextInList();
+})
 
 //SETTINGS
 //
@@ -146,7 +186,6 @@ window.onclick = function(e) {
     }
 }
 
-
 //hex button press
 const hexCheckbox = document.getElementById("hexCheckbox");
 
@@ -158,21 +197,6 @@ hexCheckbox.addEventListener('change', () => {
         document.getElementById("colorName").textContent = colorList[current].name;
     }
 });
-
-
-//left right button
-const leftBtn = document.getElementById("leftHoverButton");
-const rightBtn = document.getElementById("rightHoverButton");
-
-leftBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    prevInList();
-});
-
-rightBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    nextInList();
-})
 
 //position change
 const positionCheckbox = document.getElementById("positionCheckbox")
@@ -188,3 +212,15 @@ positionCheckbox.addEventListener('change', () => {
 
 //is it better to just have a singular update on modal close?
 //seems possible
+
+//on switch press, auto update color every 5 seconds
+const switchCheckbox = document.getElementById("switchCheckbox");
+let intervalID;
+
+switchCheckbox.addEventListener('change', () => {
+    if (switchCheckbox.checked) {
+        intervalID = setInterval(nextInList, 5000);
+    } else {
+        clearInterval(intervalID);
+    }
+})
