@@ -1,11 +1,57 @@
 $(document).ready(function () {
     $("input:checkbox").prop("checked", false);
+    $(".slider").prop("value", 5);
+    $(".sliderOutput").text("5");
 });
 
+const toHex = (x) => x.toString(16).padStart(2, '0');
+
 const hexGen = () => {
-    const randomHex = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
+    const randomHex = () => Math.floor(Math.random() * 256).toHex();
     return randomHex() + randomHex() + randomHex();
 }
+
+const twoShuffle = (array) => {
+    return Math.random() < 0.5 ? array : [array[1], array[0]];
+}
+
+const DominantGen = () => {
+    const randomDominant = () => Math.floor(Math.random() * 128 + 80)
+    const random = (x) => Math.floor(Math.random() * x);
+    const dominant = randomDominant();
+    const first = random(dominant);
+    const second = random(first);
+    const RB = [first, second];
+    const shuffledRB = twoShuffle(RB);
+    const final = [dominant];
+    final.push(...shuffledRB);
+    return final;
+}
+
+const greenGen2 = () => {
+    const final = DominantGen();
+    console.log(final);
+    return toHex(final[1]) + toHex(final[0]) + toHex(final[2]);
+}
+
+const redGen = () => {
+    const randomGBHex = () => Math.floor(Math.random() * 128).toString(16).padStart(2, '0');
+    const randomRHex = () => Math.floor(Math.random() * 128 + 126).toString(16).padStart(2, '0');
+    return randomRHex() + randomGBHex() + randomGBHex();
+}
+
+const greenGen = () => {
+    const randomRBHex = () => Math.floor(Math.random() * 128).toString(16).padStart(2, '0');
+    const randomGHex = () => Math.floor(Math.random() * 128 + 126).toString(16).padStart(2, '0');
+    return randomRBHex() + randomGHex() + randomRBHex();
+}
+
+const blueGen = () => {
+    const randomRGHex = () => Math.floor(Math.random() * 128).toString(16).padStart(2, '0');
+    const randomBHex = () => Math.floor(Math.random() * 128 + 126).toString(16).padStart(2, '0');
+    return randomRGHex() + randomRGHex() + randomBHex();
+}
+
 
 const colorCache = {};
 
@@ -46,6 +92,7 @@ async function initColorList() {
     let promises = [];
     for (let i = 0; i < 5; i++) {
         const colorHex = hexGen();
+        console.log(colorHex);
 
         promises.push(
             findColorName(colorHex).then(colorData => {
@@ -56,7 +103,6 @@ async function initColorList() {
 
     const colorData = await Promise.all(promises);
     colorList.push(...colorData);
-    console.log(colorList);
 }
 
 // function for adding new color to end of list
@@ -68,12 +114,17 @@ async function addToList() {
 }
 
 document.addEventListener("DOMContentLoaded", initColorList);
+var flag = false;
 
 async function nextInList() {
-    document.getElementById('tutorial').textContent = "";
-    if (current < colorList.length - 1) {
-        console.log(current)
+    if (!flag) {
+        document.getElementById('tutorial').textContent = "";
+        document.getElementById('settingsTutorial').textContent = "";
+        document.getElementById('leftTutorial').textContent = "";
+        document.getElementById('rightTutorial').textContent = "";
+    }
 
+    if (current < colorList.length - 1) {
         current++;
         updateColor();
         
@@ -81,12 +132,17 @@ async function nextInList() {
             await addToList();
         }
     }
+    flag = true;
 }
 
 function prevInList() {
     if (current > 0) {
         current--;
         updateColor();
+    }
+    if (flag && current === 0) {
+        document.getElementById('tutorial').textContent = "SECRET COLOR"
+        flag = false;
     }
 }
 
@@ -123,7 +179,6 @@ document.body.addEventListener("click", function (e) {
     }
 });
 
-
 let isArrowKeyAllowed = true;
 
 function throttle(callback) {
@@ -140,11 +195,9 @@ function throttle(callback) {
 document.body.addEventListener('keydown', function (event) {
     switch (event.key) {
         case "ArrowLeft":
-            console.log("left");
             throttle(prevInList);
             break;
         case "ArrowRight":
-            console.log("right");
             throttle(nextInList);
             break;
     }
@@ -213,14 +266,29 @@ positionCheckbox.addEventListener('change', () => {
 //is it better to just have a singular update on modal close?
 //seems possible
 
-//on switch press, auto update color every 5 seconds
+//on switch press, auto update color every specified amount of seconds (starts at 5)
 const switchCheckbox = document.getElementById("switchCheckbox");
 let intervalID;
+let intervalSet = 5000;
+
+var slider = document.getElementById("myRange");
+var output = document.getElementById("sliderOutput");
+output.innerHTML = slider.value;
+
+slider.oninput = function() {
+    intervalSet = this.value * 1000
+    output.innerHTML = (this.value) + " seconds";
+    if (switchCheckbox.checked) {
+        clearInterval(intervalID)
+        intervalID = setInterval(nextInList, intervalSet);
+    }
+}
 
 switchCheckbox.addEventListener('change', () => {
     if (switchCheckbox.checked) {
-        intervalID = setInterval(nextInList, 5000);
+        intervalID = setInterval(nextInList, intervalSet);
     } else {
         clearInterval(intervalID);
     }
 })
+

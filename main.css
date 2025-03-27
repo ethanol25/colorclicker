@@ -11,6 +11,30 @@ body {
   transition: background-color 0.5s ease;
 }
 
+#leftTutorial {
+  position: fixed;
+  bottom: 50%;
+  left: -45px;
+  padding: 50px;
+  transform: translateY(-10%);
+}
+
+#rightTutorial {
+  position: fixed;
+  bottom: 50%;
+  right: -45px;
+  padding: 50px;
+  transform: translateY(-10%);
+}
+
+#settingsTutorial {
+  position: fixed;
+  bottom: -50px; 
+  left: 50%;
+  padding:100px;
+  transform: translateX(-50%);
+}
+
 #colorName {
   margin:20px;
   font-size: 24px;

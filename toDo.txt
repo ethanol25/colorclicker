@@ -1,9 +1,10 @@
-
-put hex code under colorname
-
 longterm
 
-auto switch colors
+add slider to change speed of color change
+add 
+space bar to stop auto switch
+put hex code under colorname
+create as a mobile app
+
 change through palettes
 create handpicked lists??? special palettes you can rotate through??
-create as a mobile app
