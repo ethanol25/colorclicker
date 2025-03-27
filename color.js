@@ -4,10 +4,8 @@ $(document).ready(function () {
     $(".sliderOutput").text("5");
 });
 
-const toHex = (x) => x.toString(16).padStart(2, '0');
-
 const hexGen = () => {
-    const randomHex = () => Math.floor(Math.random() * 256).toHex();
+    const randomHex = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
     return randomHex() + randomHex() + randomHex();
 }
 
