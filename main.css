@@ -189,3 +189,109 @@ body {
 .right-hover-area:hover .right-hover-button{
   right: 20px; 
 }
+
+/*slider*/
+
+
+/*palettes*/
+
+.pbuttcont {
+  text-align: left;
+
+}
+
+.paletteButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+#randomButton {
+  background-color: orange;
+}
+#redButton {
+  background-color: red;
+}
+#greenButton {
+  background-color: green;
+}
+#blueButton {
+  background-color: blue;
+}
+
+
+#randomButton:hover{
+  background-color: darkorange;
+}
+#redButton:hover{
+  background-color: darkred;
+}
+#greenButton:hover {
+  background-color: darkgreen;
+}
+#blueButton:hover{
+  background-color: darkblue;
+}
+
+
+
+.paletteButtons button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+
+.currentPalette {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Loading */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s ease;
+}
+
+.loading-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.loading-spinner {
+  border: 8px solid #f3f3f3; 
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -4,7 +4,7 @@ $(document).ready(function () {
     $(".sliderOutput").text("5");
 });
 
-const hexGen = () => {
+const randGen = () => {
     const randomHex = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
     return randomHex() + randomHex() + randomHex();
 }
@@ -13,6 +13,7 @@ const twoShuffle = (array) => {
     return Math.random() < 0.5 ? array : [array[1], array[0]];
 }
 
+/*
 const DominantGen = () => {
     const randomDominant = () => Math.floor(Math.random() * 128 + 80)
     const random = (x) => Math.floor(Math.random() * x);
@@ -30,7 +31,7 @@ const greenGen2 = () => {
     const final = DominantGen();
     console.log(final);
     return toHex(final[1]) + toHex(final[0]) + toHex(final[2]);
-}
+}*/
 
 const redGen = () => {
     const randomGBHex = () => Math.floor(Math.random() * 128).toString(16).padStart(2, '0');
@@ -52,6 +53,7 @@ const blueGen = () => {
 
 
 const colorCache = {};
+let generator = randGen;
 
 //fetch color name from color.pizza api
 async function findColorName(colorHex) {
@@ -86,10 +88,17 @@ var colorList = [];
 let current = 0;
 
 //initalize array with 5 colors
+
+let initalizeFlag = false;
+
 async function initColorList() {
+    if (initalizeFlag) return;
+    initalizeFlag = true;
+
+
     let promises = [];
     for (let i = 0; i < 5; i++) {
-        const colorHex = hexGen();
+        const colorHex = generator();
         console.log(colorHex);
 
         promises.push(
@@ -101,11 +110,12 @@ async function initColorList() {
 
     const colorData = await Promise.all(promises);
     colorList.push(...colorData);
+    initalizeFlag = false;
 }
 
 // function for adding new color to end of list
 async function addToList() {
-    const colorHex = hexGen();
+    const colorHex = generator();
     const colorData = await findColorName(colorHex);
 
     colorList.push({name: colorData.name, hex: colorHex, luminance: colorData.luminance});
@@ -232,7 +242,7 @@ openBtn.addEventListener("click", openModal);
 closeSpan.addEventListener("click", closeModal);
 
 window.onclick = function(e) {
-    if (e.target == modal) {
+    if (e.target === modal) {
         closeModal(e);
     }
 }
@@ -284,9 +294,69 @@ slider.oninput = function() {
 
 switchCheckbox.addEventListener('change', () => {
     if (switchCheckbox.checked) {
+        clearInterval(intervalID);
         intervalID = setInterval(nextInList, intervalSet);
     } else {
         clearInterval(intervalID);
     }
 })
 
+//palettes
+//
+const paletteButtons = document.querySelectorAll(".paletteButton");
+let currentPalette = "random";
+
+paletteButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+    currentPalette = button.getAttribute("data");
+
+    paletteButtons.forEach((btn) => btn.classList.remove("currentPalette"));
+    button.classList.add("currentPalette");
+    updatePalette();
+    
+    });
+});
+
+async function updatePalette() {
+    const loadingOverlay = document.getElementById("loadingOverlay")
+    loadingOverlay.classList.add("active");
+    try {
+        switch (currentPalette) {
+            case "random":
+                console.log("random");
+                generator = randGen;
+                colorList.length = 0;
+                await initColorList();
+                current = 1;
+                updateColor();
+                break;
+            case "red":
+                console.log("red");
+                generator = redGen;
+                colorList.length = 0;
+                await initColorList();
+                current = 1;
+                updateColor();
+                break;
+            
+            case "green":
+                console.log("green");
+                generator = greenGen;
+                colorList.length = 0;
+                await initColorList();
+                current = 1;
+                updateColor();
+                break;
+            case "blue":
+                console.log("blue");
+                generator = blueGen;
+                colorList.length = 0;
+                await initColorList();
+                current = 1;
+                updateColor()
+                break;
+        }
+    } finally {
+        loadingOverlay.classList.remove("active");
+    }
+}

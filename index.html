@@ -49,16 +49,30 @@
         <label class="settings-button">
           <input type="checkbox" id="switchCheckbox" style="margin-right: 10px;">
           Auto Switch through Colors
+          <div class="slider-container">
+            <input type="range" min="1" max="30" value = "5" class="slider" id="myRange">
+            <p class="sliderOutput"id="sliderOutput">5 seconds</p>
+          </div>
         </label>
-        <div class="slider-container">
-          <input type="range" min="1" max="30" value = "5" class="slider" id="myRange">
-          <p class="sliderOutput"id="sliderOutput">5</p>
+        <div class ="pbuttcont">
+          <p>Palettes</p>
+          <div class="paletteButtons" id="paletteButtons">
+            <button class="paletteButton" id="randomButton" data="random">Random</button>
+            <button class="paletteButton" id="redButton" data="red">Red</button>
+            <button class="paletteButton" id="greenButton" data="green">Green</button>
+            <button class="paletteButton" id="blueButton" data="blue">Blue</button>
+          </div>
+          <p>Warning! Selecting a palette erases all memory of previous colors</p>
         </div>
+
         <p>Made by Ethan Dye</p>
       </div>
     </div>
   </div>
-
+  
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
   <script src="color.js" defer></script>
 </body>
 </html>
