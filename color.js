@@ -1,37 +1,19 @@
-$(document).ready(function () {
-    $("input:checkbox").prop("checked", false);
-    $(".slider").prop("value", 5);
-    $(".sliderOutput").text("5");
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+        checkbox.checked = false;
+    });
+    document.querySelectorAll(".slider").forEach((slider) => {
+        slider.value = 5;
+    });
+    document.querySelectorAll(".sliderOutput").forEach((output) => {
+        output.textContent = "5 seconds";
+    });
 });
 
 const randGen = () => {
     const randomHex = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0');
     return randomHex() + randomHex() + randomHex();
 }
-
-const twoShuffle = (array) => {
-    return Math.random() < 0.5 ? array : [array[1], array[0]];
-}
-
-/*
-const DominantGen = () => {
-    const randomDominant = () => Math.floor(Math.random() * 128 + 80)
-    const random = (x) => Math.floor(Math.random() * x);
-    const dominant = randomDominant();
-    const first = random(dominant);
-    const second = random(first);
-    const RB = [first, second];
-    const shuffledRB = twoShuffle(RB);
-    const final = [dominant];
-    final.push(...shuffledRB);
-    return final;
-}
-
-const greenGen2 = () => {
-    const final = DominantGen();
-    console.log(final);
-    return toHex(final[1]) + toHex(final[0]) + toHex(final[2]);
-}*/
 
 const redGen = () => {
     const randomGBHex = () => Math.floor(Math.random() * 128).toString(16).padStart(2, '0');
@@ -50,7 +32,6 @@ const blueGen = () => {
     const randomBHex = () => Math.floor(Math.random() * 128 + 126).toString(16).padStart(2, '0');
     return randomRGHex() + randomRGHex() + randomBHex();
 }
-
 
 const colorCache = {};
 let generator = randGen;
@@ -88,9 +69,7 @@ var colorList = [];
 let current = 0;
 
 //initalize array with 5 colors
-
 let initalizeFlag = false;
-
 async function initColorList() {
     if (initalizeFlag) return;
     initalizeFlag = true;
@@ -188,7 +167,6 @@ document.body.addEventListener("click", function (e) {
 });
 
 let isArrowKeyAllowed = true;
-
 function throttle(callback) {
     if (isArrowKeyAllowed) {
         isArrowKeyAllowed = false;
@@ -199,14 +177,26 @@ function throttle(callback) {
     }
 }
 
+const switchCheckbox = document.getElementById("switchCheckbox");
+
 //listen for left and right key press
-document.body.addEventListener('keydown', function (event) {
+document.body.addEventListener('keydown', function (event) {    
     switch (event.key) {
         case "ArrowLeft":
             throttle(prevInList);
             break;
         case "ArrowRight":
             throttle(nextInList);
+            break;
+        case " ":
+            event.preventDefault();
+            switchCheckbox.checked = !switchCheckbox.checked;
+            if (switchCheckbox.checked) {
+                clearInterval(intervalID);
+                intervalID = setInterval(nextInList, intervalSet);
+            } else {
+                clearInterval(intervalID);
+            }
             break;
     }
 });
@@ -275,17 +265,16 @@ positionCheckbox.addEventListener('change', () => {
 //seems possible
 
 //on switch press, auto update color every specified amount of seconds (starts at 5)
-const switchCheckbox = document.getElementById("switchCheckbox");
 let intervalID;
 let intervalSet = 5000;
 
 var slider = document.getElementById("myRange");
 var output = document.getElementById("sliderOutput");
-output.innerHTML = slider.value;
+output.innerHTML = slider.value + " seconds";
 
 slider.oninput = function() {
     intervalSet = this.value * 1000
-    output.innerHTML = (this.value) + " seconds";
+    output.innerHTML = this.value + " seconds";
     if (switchCheckbox.checked) {
         clearInterval(intervalID)
         intervalID = setInterval(nextInList, intervalSet);
